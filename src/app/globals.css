@@ -1,0 +1,369 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /*
+    三套西文字体由 src/app/layout.tsx 用 next/font 打包进站里（构建时下载，上线后不向 Google 发请求）。
+    它们都没有中文：正文的中文落到苹方等系统黑体，大标题的中文落到系统宋体。
+  */
+  --font-sans:
+    var(--font-inter), -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Noto Sans CJK SC", "Helvetica Neue", Arial, sans-serif;
+  --font-serif:
+    var(--font-newsreader), "Songti SC", "Noto Serif SC", "Source Han Serif SC", SimSun, Georgia,
+    serif;
+  --font-mono:
+    var(--font-plex-mono), ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+    "PingFang SC", "Microsoft YaHei", monospace;
+  --font-heading: var(--font-sans);
+  /* 手写体 Caveat：页脚和店里的英文点缀。没有中文字形，中文仍走上面的字体。 */
+  --font-hand: var(--font-caveat), cursive;
+  --color-brand-gray: #1a1a1a;
+  /* 前台所有过渡共用的曲线：ease-soft */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --color-link: var(--link);
+  --radius-card: var(--card-radius);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+  Keyly 的配色：白底、近黑的字、一档浅灰，天蓝色是唯一的强调色，
+  只用在主按钮、链接和焦点框上。别的地方不要再加颜色。
+  天蓝色系一共七档：#0369A1 #0284C7 #0EA5E9 #38BDF8 #7DD3FC #BAE6FD #F0F9FF。
+  - 实心的天蓝底（--primary）上只放深海军蓝的字（--primary-foreground），不放白字：白字对比度不够。
+  - 白底、浅底上的强调文字和链接用 --link（text-link），不要用 primary 当文字色。
+*/
+:root {
+  --background: #ffffff;
+  --foreground: #1d1d1f;
+  --card: #ffffff;
+  --card-foreground: #1d1d1f;
+  --popover: #ffffff;
+  --popover-foreground: #1d1d1f;
+  --primary: #7ec8f0;
+  --primary-hover: #a8dcf7;
+  --primary-active: #5eb4e6;
+  --primary-foreground: #082f49;
+  --link: #0369a1;
+  /* 状态色只有两种：完成用绿，等待用橙。各配一个浅底 */
+  --success: #177a43;
+  --success-soft: #e6f6ec;
+  --warning: #8a5200;
+  --warning-soft: #fff1d9;
+  --secondary: #f5f5f7;
+  --secondary-foreground: #1d1d1f;
+  --muted: #f5f5f7;
+  /* 比原来的 #6e6e73 深一点：前台的底带一层淡蓝，灰字压在上面也要够 4.5:1 */
+  --muted-foreground: #5f5f66;
+  --accent: #f5f5f7;
+  --accent-foreground: #1d1d1f;
+  --destructive: #d92d20;
+  --border: #e3e3e8;
+  --input: #d2d2d7;
+  /* 焦点框和选中描边要和白底拉开 3:1，用深一档的 #0284C7 */
+  --ring: #0284c7;
+  --chart-1: #0284c7;
+  --chart-2: #0369a1;
+  --chart-3: #7dd3fc;
+  --chart-4: #38bdf8;
+  --chart-5: #1d1d1f;
+  --radius: 0.75rem;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #1d1d1f;
+  --sidebar-primary: #1d1d1f;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f5f5f7;
+  --sidebar-accent-foreground: #1d1d1f;
+  --sidebar-border: #e3e3e8;
+  --sidebar-ring: #0284c7;
+  /* 前台卡片的圆角：手机上收小一档 */
+  --card-radius: 24px;
+}
+@media (min-width: 640px) {
+  :root {
+    --card-radius: 32px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+    /* 顶部有一条贴顶的导航。跳转到新页面时 Next 会参考这个值，保证页面顶部不被导航挡住 */
+    scroll-padding-top: 5.5rem;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/*
+  字号只有这七档，前台页面一律用它们，不要再写零散的 text-[..px]。
+  标题三档自带 600 字重；中文标题不收字距。
+  大标题要用衬线体时再加一个 type-serif：换成 Newsreader 加系统宋体，字重降到 500（宋体粗了发闷）。
+*/
+@utility type-serif {
+  font-family: var(--font-serif);
+  --type-weight: 500;
+}
+@utility type-display {
+  font-size: 56px;
+  line-height: 60px;
+  font-weight: var(--type-weight, 600);
+}
+@utility type-headline {
+  font-size: 40px;
+  line-height: 44px;
+  font-weight: var(--type-weight, 600);
+}
+@utility type-title {
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: var(--type-weight, 600);
+}
+@utility type-lead {
+  font-size: 21px;
+  line-height: 29px;
+}
+@utility type-body {
+  font-size: 17px;
+  line-height: 25px;
+}
+@utility type-small {
+  font-size: 14px;
+  line-height: 20px;
+}
+@utility type-caption {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+/*
+  ── 前台的界面组件（照 docs/参考-玻璃质感组件设计稿.md，强调色换成天蓝）──────────
+  卡片两种：card-solid 白色实心卡，card-glass 半透明玻璃卡（售罄、暂未开售、导航）。
+  过渡一律 0.4s ease-soft；能点的卡片加 card-lift，悬停轻轻上浮。
+*/
+
+/* 页面底：很淡的天蓝和中性灰色块，固定在视口上。玻璃卡后面得有东西才看得出是玻璃 */
+@utility page-backdrop {
+  position: relative;
+  isolation: isolate;
+  background-color: #f4f6f8;
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(60vmax 46vmax at 8% -6%, rgb(125 211 252 / 0.42), transparent 62%),
+      radial-gradient(48vmax 42vmax at 100% 18%, rgb(186 230 253 / 0.6), transparent 64%),
+      radial-gradient(52vmax 46vmax at 72% 108%, rgb(56 189 248 / 0.2), transparent 62%),
+      radial-gradient(46vmax 40vmax at -4% 78%, rgb(210 210 215 / 0.55), transparent 62%);
+  }
+}
+
+@utility card-solid {
+  border-radius: var(--card-radius);
+  background-color: var(--card);
+  box-shadow:
+    0 4px 20px rgb(8 47 73 / 0.05),
+    0 1px 3px rgb(8 47 73 / 0.03);
+}
+
+/* 实心卡的另一种底：顶上一抹最浅的天蓝，往下化成白。上面放白色小药丸时用它，药丸才看得见 */
+@utility card-tint {
+  background-image: linear-gradient(to bottom, #f0f9ff 0%, #ffffff 50%);
+}
+
+@utility card-glass {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--card-radius);
+  /* 顶部高光叠在半透明白底上 */
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.55), rgb(255 255 255 / 0) 34%),
+    rgb(255 255 255 / 0.55);
+  -webkit-backdrop-filter: blur(8px) saturate(1.8);
+  backdrop-filter: blur(8px) saturate(1.8);
+  box-shadow:
+    0 4px 24px rgb(0 0 0 / 0.06),
+    0 1px 4px rgb(0 0 0 / 0.04),
+    inset 0 1px 0 rgb(255 255 255 / 0.7);
+  /* 细颗粒：一张自己写的 SVG 噪点，叠在最上面，不挡点击 */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.1;
+    mix-blend-mode: overlay;
+  }
+}
+
+@utility card-lift {
+  transition:
+    transform 0.4s var(--ease-soft),
+    box-shadow 0.4s var(--ease-soft);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow:
+        0 18px 44px rgb(8 47 73 / 0.1),
+        0 2px 6px rgb(8 47 73 / 0.05);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/* 分段切换：药丸底，当前项（带 aria-current）是白色小药丸加阴影。用在顶部导航和首页分类页签 */
+@utility seg {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 9999px;
+  background-color: rgb(0 0 0 / 0.04);
+}
+@utility seg-item {
+  flex-shrink: 0;
+  border-radius: 9999px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--foreground) 72%, transparent);
+  transition: all 0.4s var(--ease-soft);
+  &:hover {
+    color: var(--foreground);
+  }
+  &[aria-current] {
+    background-color: #ffffff;
+    color: var(--foreground);
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  }
+  @media (min-width: 640px) {
+    padding: 8px 18px;
+  }
+  /* 320 宽的小屏：导航四项加标志放不下，左右内边距收到 6px，不然整页会横向滚动 */
+  @media (max-width: 359.98px) {
+    padding: 8px 6px;
+  }
+}
+
+/* 白色小药丸标签：库存、付款方式、分类 */
+@utility chip {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  padding: 6px 14px;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+}
+
+/* 圆形图标按钮 */
+@utility icon-btn {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+  transition: all 0.4s var(--ease-soft);
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.08);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/* 数字徽标：卡片底部的小圆，等宽数字 */
+@utility count-badge {
+  display: inline-grid;
+  min-width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 9999px;
+  background-color: rgb(0 0 0 / 0.06);
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
