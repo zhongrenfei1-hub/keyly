@@ -1,0 +1,35 @@
+/* 传送带卡片的底光。卡片自己在走，这层只在卡片里面慢慢挪。 */
+.belt-wash {
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 46% at 28% 36%, var(--wash-a), transparent 70%),
+    radial-gradient(34% 40% at 74% 72%, var(--wash-b), transparent 72%);
+  animation: belt-wash 18s ease-in-out infinite alternate;
+}
+.belt-wash-0 {
+  --wash-a: #7dd3fc;
+  --wash-b: #e0f2fe;
+}
+.belt-wash-1 {
+  --wash-a: rgb(56 189 248 / 0.7);
+  --wash-b: rgb(125 211 252 / 0.28);
+}
+.belt-wash-2 {
+  --wash-a: rgb(255 255 255 / 0.72);
+  --wash-b: rgb(240 249 255 / 0.35);
+}
+@keyframes belt-wash {
+  from {
+    transform: translate3d(-8%, -6%, 0);
+  }
+  to {
+    transform: translate3d(10%, 8%, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .belt-wash {
+    animation: none;
+  }
+}
