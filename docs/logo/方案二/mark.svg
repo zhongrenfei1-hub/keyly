@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Keyly">
+  <title>Keyly</title>
+  <!-- 钥匙头 + 钥匙杆 + K 的两条斜笔。形状按内缩 2 画，再用 4 的同色圆角描边撑回去，外角统一成小圆角 -->
+  <g fill="#082F49" stroke="#082F49" stroke-width="4" stroke-linejoin="round">
+    <rect x="17" y="7" width="22" height="22" rx="7"/>
+    <rect x="25" y="28" width="6" height="29"/>
+    <path d="M28 46l11-11h9L37 46l11 11h-9z"/>
+  </g>
+  <!-- 钥匙孔：和杆同宽的方圆点 -->
+  <rect x="23" y="13" width="10" height="10" rx="3.5" fill="#0EA5E9"/>
+</svg>

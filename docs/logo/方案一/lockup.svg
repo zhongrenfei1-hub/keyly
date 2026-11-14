@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 158 80">
+  <title>Keyly</title>
+  <!-- 首字母 k 就是 mark.svg 里的记号（原样平移），后面 e y l y 用同一套模块画 -->
+  <g fill="#082F49">
+    <path transform="translate(-8)" d="M19 24H25Q27 24 27 26V31.5A1 1 0 0 0 28.5 32.5L35.5 25.5Q37 24 39 24H46Q48 24 48 26Q48 27 47 28L36.5 38.5Q35 40 36.5 41.5L47 52Q48 53 48 54Q48 56 46 56H39Q37 56 35.5 54.5L28.5 47.5A1 1 0 0 0 27 48.5V54Q27 56 25 56H19Q17 56 17 54V26Q17 24 19 24Z"/>
+    <path transform="translate(43)" fill-rule="evenodd" d="M28 41V38A14 14 0 0 0 0 38V42A14 14 0 0 0 14 56A14 14 0 0 0 26.5 48.5Q27 47 25 47H12A2 2 0 0 1 12 43H26Q28 43 28 41ZM13 31H15A3 3 0 0 1 15 37H13A3 3 0 0 1 13 31Z"/>
+    <path transform="translate(74)" d="M0 26Q0 24 2 24H8Q10 24 10 26V42A4 4 0 0 0 18 42V26Q18 24 20 24H26Q28 24 28 26V70Q28 72 26 72H20Q18 72 18 70V58Q18 56 16 56H14A14 14 0 0 1 0 42Z"/>
+    <rect x="107" y="8" width="10" height="48" rx="2"/>
+    <path transform="translate(122)" d="M0 26Q0 24 2 24H8Q10 24 10 26V42A4 4 0 0 0 18 42V26Q18 24 20 24H26Q28 24 28 26V70Q28 72 26 72H20Q18 72 18 70V58Q18 56 16 56H14A14 14 0 0 1 0 42Z"/>
+  </g>
+  <g fill="#0EA5E9">
+    <path transform="translate(-8)" d="M16 14C16 9.5 17.5 8 22 8S28 9.5 28 14 26.5 20 22 20 16 18.5 16 14Z"/>
+    <path transform="translate(108 52)" d="M16 14C16 9.5 17.5 8 22 8S28 9.5 28 14 26.5 20 22 20 16 18.5 16 14Z"/>
+  </g>
+</svg>

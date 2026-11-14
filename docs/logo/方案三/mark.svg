@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Keyly">
+  <title>Keyly</title>
+  <path fill="#082F49" d="M12 11Q12 8 15 8H21Q24 8 24 11V23Q24 25 25.5 23.5L39.5 9.5Q41 8 43 8H49.5Q52 8 52 10.5V11.5Q52 13 51 14L25.5 39.5Q24 41 24 43V53Q24 56 21 56H15Q12 56 12 53Z"/>
+  <path fill="#0EA5E9" d="M38 49C38 43.5 39.5 42 45 42S52 43.5 52 49 50.5 56 45 56 38 54.5 38 49Z"/>
+</svg>

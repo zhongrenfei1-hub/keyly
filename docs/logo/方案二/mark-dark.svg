@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Keyly">
+  <title>Keyly</title>
+  <rect width="64" height="64" rx="14" fill="#082F49"/>
+  <!-- 钥匙缩到 86% 并居中：原大时钥匙头离圆角底的上边只有 5，当应用图标太挤 -->
+  <g transform="translate(32 32) scale(.86) translate(-32.5 -32)">
+    <g fill="#F0F9FF" stroke="#F0F9FF" stroke-width="4" stroke-linejoin="round">
+      <rect x="17" y="7" width="22" height="22" rx="7"/>
+      <rect x="25" y="28" width="6" height="29"/>
+      <path d="M28 46l11-11h9L37 46l11 11h-9z"/>
+    </g>
+    <rect x="23" y="13" width="10" height="10" rx="3.5" fill="#0EA5E9"/>
+  </g>
+</svg>

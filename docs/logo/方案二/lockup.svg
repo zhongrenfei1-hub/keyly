@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 79" role="img" aria-label="Keyly">
+  <title>Keyly</title>
+  <!-- 记号：与 mark.svg 同形。记号的底和字标基线对齐在 y=60，钥匙头高出大写顶 -->
+  <g transform="translate(-7 1)">
+    <g fill="#082F49" stroke="#082F49" stroke-width="4" stroke-linejoin="round">
+      <rect x="17" y="7" width="22" height="22" rx="7"/>
+      <rect x="25" y="28" width="6" height="29"/>
+      <path d="M28 46l11-11h9L37 46l11 11h-9z"/>
+    </g>
+    <rect x="23" y="13" width="10" height="10" rx="3.5" fill="#0EA5E9"/>
+  </g>
+  <!-- 字标 Keyly：全部用路径画，不依赖字体。
+       字内坐标：大写顶 0，x 高顶 10，基线 54，下伸到 70；竖笔 12，横笔 10，字间隙 3 到 5。
+       形状按内缩 2 画，再用 4 的同色圆角描边撑回去。 -->
+  <g transform="translate(55 16.8) scale(.8)">
+    <g fill="#082F49" stroke="#082F49" stroke-width="4" stroke-linejoin="round" fill-rule="evenodd">
+      <!-- K -->
+      <rect x="2" y="2" width="8" height="50"/>
+      <path d="M8 27 28 2h10L18 27l20 25H28z"/>
+      <!-- e -->
+      <path transform="translate(43)" d="M16 12h6a14 14 0 0 1 14 14v8H10v4a8 8 0 0 0 8 8h2a8 8 0 0 0 7-4h8.5A14 14 0 0 1 22 52h-6A14 14 0 0 1 2 38V26a14 14 0 0 1 14-14zM18 18h2a8 8 0 0 1 8 8v4H10v-4a8 8 0 0 1 8-8z"/>
+      <!-- y：带钩 -->
+      <path transform="translate(86)" d="M2 12h8v26a8 8 0 0 0 8 8h2a8 8 0 0 0 8-8V12h8v42a14 14 0 0 1-14 14H12v-8h10a6 6 0 0 0 6-6v-2H16A14 14 0 0 1 2 38z"/>
+      <!-- l -->
+      <rect x="131" y="2" width="8" height="50"/>
+      <!-- y：钩子切掉，位置让给一个点 -->
+      <path transform="translate(146)" d="M2 12h8v26a8 8 0 0 0 8 8h2a8 8 0 0 0 8-8V12h8v56h-8V52H16A14 14 0 0 1 2 38z"/>
+    </g>
+    <rect x="156" y="58" width="12" height="12" rx="4" fill="#0EA5E9"/>
+  </g>
+</svg>

@@ -34,8 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
-# SQLite 数据库（订单和卡密都在里面）
-/data/
+# SQLite：订单库不进仓库。演示库带上，克隆后货架和这里一样。
+/data/*
+!/data/keyly.db
 
 # vercel
 .vercel
