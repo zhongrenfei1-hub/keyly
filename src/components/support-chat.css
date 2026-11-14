@@ -1,0 +1,160 @@
+/*
+  客服对话框的样子和入场动画，照 docs/参考-对话面板设计稿.md 的第二屏：
+  渐变面板里一张深色对话卡，气泡，底部白色药丸输入条，发送按钮外一圈慢慢转的光环。
+  稿子里的黄绿渐变一律换成天蓝色系。
+
+  这是一份普通的全局样式，不是 CSS Modules：next.config.ts 把所有 .css 都交给了 Tailwind 的加载器，
+  *.module.css 在这个项目里不会被当成模块（类名对象是空的）。所以类名和动画名都带 chat- 前缀，免得撞名。
+*/
+.chat-root {
+  /*
+    稿子的入场是滚动到位时播的，整套约 1.5 秒；这里是点了按钮才开，照原样太拖。
+    先后顺序、间隔比例和曲线都照稿子，时间统一乘这个系数。改成 1 就是稿子的原速。
+  */
+  --pace: 0.5;
+  /* 位移距离：手机上乘 0.7（稿子的 D） */
+  --d: 1;
+}
+@media (max-width: 680px) {
+  .chat-root {
+    --d: 0.7;
+  }
+}
+
+/* ── 渐变面板 ── */
+.chat-panel {
+  background:
+    radial-gradient(120% 150% at 9% 52%, #e0f2fe 0%, #bae6fd 22%, rgb(186 230 253 / 0) 56%),
+    radial-gradient(120% 150% at 95% 50%, #0ea5e9 0%, #38bdf8 34%, rgb(56 189 248 / 0) 64%),
+    linear-gradient(96deg, #bae6fd 0%, #7dd3fc 34%, #38bdf8 68%, #0ea5e9 100%);
+  box-shadow:
+    0 24px 64px rgb(8 47 73 / 0.28),
+    0 2px 8px rgb(8 47 73 / 0.12);
+  transform-origin: 100% 100%;
+  animation: chat-panel-in calc(1s * var(--pace)) cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes chat-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(26px * var(--d))) scale(0.985);
+  }
+}
+
+/* 对话卡只位移、不淡入：透明度跟着面板走 */
+.chat-card {
+  background-color: #f7fbff;
+  animation: chat-card-in calc(0.85s * var(--pace)) cubic-bezier(0.16, 1, 0.3, 1)
+    calc(0.32s * var(--pace)) both;
+}
+@keyframes chat-card-in {
+  from {
+    transform: translateY(calc(18px * var(--d)));
+  }
+}
+
+/* 标题行、气泡、输入条：淡入加上浮 10px。--at 是稿子时间轴上的起点（秒），不写就立刻开始 */
+.chat-lift {
+  animation: chat-lift calc(0.55s * var(--pace)) cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--at, 0) * 1s * var(--pace)) both;
+}
+@keyframes chat-lift {
+  from {
+    opacity: 0;
+    transform: translateY(calc(10px * var(--d)));
+  }
+}
+
+/* ── 气泡 ── */
+.chat-bubble {
+  max-width: 78%;
+  border-radius: 14px;
+  background-color: #e8f4fc;
+  padding: 9px 13px;
+  color: #1d1d1f;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.chat-bot-avatar {
+  background: linear-gradient(105deg, #f0f9ff 0%, #7dd3fc 40%, #0ea5e9 62%, #0369a1 100%);
+}
+
+/* 常见问题的小药丸：稿子第一屏输入卡上那种透明底、细白边的 */
+.chat-faq {
+  border: 1px solid rgb(3 105 161 / 0.18);
+  background-color: rgb(255 255 255 / 0.72);
+  color: #1d1d1f;
+  transition: background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.chat-faq:hover {
+  background-color: #fff;
+}
+
+/* ── 发送按钮：2px 的光环绕着转，按钮本身不动 ── */
+.chat-send {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 2px;
+  border-radius: 9999px;
+  transition: filter 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.chat-send::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    #f0f9ff 0%,
+    #bae6fd 22%,
+    #38bdf8 40%,
+    #0ea5e9 60%,
+    #0284c7 76%,
+    #0369a1 100%
+  );
+  /* 等入场播完再开始转 */
+  animation: chat-ring-sweep 10s linear calc(1.5s * var(--pace)) infinite;
+}
+.chat-send:hover {
+  filter: brightness(1.15);
+}
+.chat-send:active .chat-send-inner {
+  transform: scale(0.95);
+}
+.chat-send:disabled {
+  cursor: default;
+}
+.chat-send-inner {
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background-color: #fff;
+  color: #1d1d1f;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes chat-ring-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 减少动态效果：不播入场，光环不转，直接是最终的样子 */
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel,
+  .chat-card,
+  .chat-lift,
+  .chat-send::before {
+    animation: none;
+  }
+  .chat-faq,
+  .chat-send,
+  .chat-send-inner {
+    transition: none;
+  }
+}

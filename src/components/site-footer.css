@@ -1,0 +1,490 @@
+/*
+  前台页脚的样子，照 docs/参考-Kresna-页脚设计稿.md，取舍见 docs/改版-定法.md「第五份」：
+  左边一张蓝卡、右边一张白卡，底下垫一个超大的字标水印。尺寸数字都是稿子的；稿子的蓝换成站里的天蓝色系，
+  稿子的视频换成这里用渐变画的流动光。
+
+  这是一份普通的全局样式，不是 CSS Modules（原因见 support-chat.css 开头），所以类名和动画名都带 ft- 前缀。
+  它不在任何 @layer 里，会盖过同一个元素上的 Tailwind 类（card-solid 的圆角、LogoMark 的尺寸和底色就是这样改掉的）。
+*/
+.ft {
+  /* 斜放的方块探出白卡上沿 36px，转了角度以后还要多 8px。留够这一段，方块不会压到上面一节 */
+  padding-top: 48px;
+}
+
+.ft-grid {
+  position: relative;
+  z-index: 1; /* 压在水印上面 */
+  display: grid;
+  grid-template-columns: 350px minmax(0, 1fr);
+  gap: 16px;
+  max-width: 1080px;
+  margin-inline: auto;
+}
+
+/* ── 左卡 ── */
+.ft-left {
+  /* 标志、标语压着的地方的底色：#0369A1 掺 35% 的 #082F49。白字 8.0:1，淡一档的第二行 5.0:1 */
+  --ft-deep: rgb(5 85 130);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 340px;
+  padding: 32px;
+  border-radius: 28px;
+  overflow: hidden;
+  color: #fff;
+  background: #0c4a6e url("/footer-flow.jpg?v=5") center / cover no-repeat;
+  box-shadow: 0 12px 40px rgb(8 47 73 / 0.22);
+}
+
+/*
+  流动光：左卡底是一条自己生成的液体视频，盖在渐变上面循环播。
+  渐变和两层伪元素是视频没出来、或开了减少动效时的底。
+  深色罩子只压在标志和标语底下，其余地方透出液体的流动。
+*/
+.ft-glow,
+.ft-left::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+/* 两层光比卡片大，得在这一层就裁掉：留给 .ft-left 去裁的话，卡片会变成一个能被滚动的容器，
+   浏览器把里面的链接滚进视野时会连卡片里的内容一起滚歪 */
+.ft-glow {
+  overflow: hidden;
+  border-radius: inherit;
+}
+.ft-glow::before,
+.ft-glow::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+}
+.ft-glow::before {
+  background:
+    radial-gradient(34% 30% at 74% 26%, #38bdf8, rgb(56 189 248 / 0) 100%),
+    radial-gradient(30% 34% at 60% 56%, #0ea5e9, rgb(14 165 233 / 0) 100%);
+  animation: ft-drift-a 23s ease-in-out infinite alternate;
+}
+.ft-glow::after {
+  background:
+    radial-gradient(18% 16% at 80% 34%, rgb(186 230 253 / 0.7), rgb(186 230 253 / 0) 100%),
+    radial-gradient(30% 24% at 52% 22%, rgb(14 165 233 / 0.9), rgb(14 165 233 / 0) 100%);
+  animation: ft-drift-b 31s ease-in-out infinite alternate;
+}
+.ft-flow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.ft-logo,
+.ft-community,
+.ft-help {
+  position: relative;
+  z-index: 2;
+}
+.ft-left::after {
+  content: "";
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgb(8 47 73 / 0.18) 0%,
+    rgb(8 47 73 / 0) 42%,
+    rgb(8 47 73 / 0.28) 100%
+  );
+}
+@keyframes ft-drift-a {
+  from {
+    transform: translate3d(-7%, 6%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6%, -5%, 0) scale(1.12);
+  }
+}
+@keyframes ft-drift-b {
+  from {
+    transform: translate3d(6%, 7%, 0) rotate(-10deg);
+  }
+  to {
+    transform: translate3d(-8%, -4%, 0) rotate(8deg);
+  }
+}
+.ft-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+.ft-mark {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid rgb(255 255 255 / 0.85);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.15);
+  color: #fff;
+}
+.ft-mark svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ft-community {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin: auto 0 36px;
+}
+.ft-community .font-hand {
+  font-size: 52px;
+  line-height: 0.9;
+  font-weight: 500;
+}
+.ft-community p:last-child {
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: rgb(255 255 255 / 0.72);
+}
+
+.ft-help,
+.ft-help ul {
+  display: flex;
+  align-items: center;
+}
+.ft-help {
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: rgb(255 255 255 / 0.9);
+}
+.ft-help ul {
+  gap: 7px;
+}
+.ft-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #0e1014;
+  color: #fff;
+  box-shadow:
+    0 6px 18px rgb(0 0 0 / 0.35),
+    0 2px 6px rgb(0 0 0 / 0.2);
+  transition:
+    background 0.2s,
+    transform 0.15s,
+    box-shadow 0.2s;
+}
+.ft-icon svg {
+  width: 15px;
+  height: 15px;
+}
+.ft-icon:hover {
+  background: #000;
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 24px rgb(0 0 0 / 0.45),
+    0 3px 8px rgb(0 0 0 / 0.25);
+}
+/* 蓝卡上的焦点框用白色，里外各垫一圈近黑：单栏时这排图标底下是亮的光团，光靠白色不够显眼 */
+.ft-icon:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #0e1014;
+}
+
+/* ── 右卡 ── */
+.ft-right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+  border-radius: 28px;
+  /* 白卡上的灰字都用这一档（6.3:1），稿子的 #9ca3af 对比度不够 */
+  color: var(--muted-foreground);
+}
+.ft-right :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+/* 右上角探出去的立体方块，点了去货架 */
+.ft-lucky {
+  position: absolute;
+  top: -36px;
+  right: 40px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.ft-cube {
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 55%, #0369a1 100%);
+  color: #fff;
+  box-shadow:
+    inset 3px 3px 8px rgb(255 255 255 / 0.35),
+    inset -3px -3px 12px rgb(0 0 0 / 0.18),
+    8px 14px 28px rgb(3 105 161 / 0.35);
+  transform: rotate(-10deg);
+  transition: transform 0.2s;
+}
+.ft-cube svg {
+  width: 42px;
+  height: 42px;
+  transform: rotate(10deg);
+  filter: drop-shadow(0 3px 6px rgb(0 0 0 / 0.25));
+}
+.ft-lucky:hover .ft-cube {
+  transform: rotate(-10deg) translateY(-3px);
+}
+.ft-lucky-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: rotate(-4deg);
+}
+.ft-lucky-text svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ft-cols {
+  display: flex;
+  gap: 72px;
+  padding-top: 8px;
+}
+.ft-cols p {
+  margin-bottom: 18px;
+  font-size: 24px;
+  line-height: 1.3;
+  font-weight: 600;
+  font-style: italic;
+}
+.ft-cols a {
+  display: block;
+  width: fit-content;
+  margin-bottom: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--foreground);
+  transition: color 0.2s;
+}
+.ft-cols a:hover {
+  color: var(--link);
+}
+
+.ft-bottom {
+  display: flex;
+  flex-wrap: wrap; /* 右卡窄到两块并排不下时，须知在上、查订单在下 */
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 32px;
+  margin-top: 48px;
+}
+.ft-notes {
+  flex: 1 1 260px;
+  max-width: 420px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  font-weight: 500;
+}
+.ft-notes p + p {
+  margin-top: 6px;
+}
+.ft-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.ft-cta strong {
+  display: block;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--foreground);
+}
+/* 稿子是浅灰卡上的白输入行；我们的卡是白的，这一行就反过来用浅灰底 */
+.ft-lookup {
+  display: flex;
+  width: 310px;
+  padding: 5px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f0f1f5;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.04);
+}
+.ft-lookup input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.4;
+  color: var(--foreground);
+  /* 手机上右下角固定着 60px 的客服按钮：聚焦滚进视野时停在它上面，别让它压住旁边的「查订单」 */
+  scroll-margin-bottom: 96px;
+}
+.ft-lookup input::placeholder {
+  font-family: var(--font-sans);
+  color: var(--muted-foreground); /* 压在 #f0f1f5 上 5.6:1 */
+}
+.ft-lookup input:focus-visible {
+  outline-offset: 0;
+}
+.ft-lookup button {
+  flex-shrink: 0;
+  padding: 11px 22px;
+  border-radius: 8px;
+  background: #111214;
+  font-size: 13.5px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  box-shadow:
+    0 6px 20px rgb(0 0 0 / 0.28),
+    0 2px 8px rgb(0 0 0 / 0.15);
+  transition:
+    background 0.2s,
+    box-shadow 0.2s,
+    transform 0.15s;
+}
+.ft-lookup button:hover {
+  background: #000;
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 26px rgb(0 0 0 / 0.36),
+    0 3px 10px rgb(0 0 0 / 0.2);
+}
+.ft-lookup button:focus-visible {
+  outline-offset: 2px;
+}
+
+/* ── 水印 ── */
+.ft-wm {
+  max-width: 1080px;
+  /* 往上收，垫在卡片后面：满宽时收 60px，窄屏上字小了，按比例少收一点 */
+  margin: max(-60px, -5.5vw) auto 0;
+  pointer-events: none;
+  user-select: none;
+}
+.ft-wm svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.ft-wm text {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  fill: rgb(8 47 73 / 0.05);
+}
+
+/* ── 两个断点，照稿子 ── */
+@media (max-width: 860px) {
+  .ft-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ft-left {
+    min-height: 0;
+    gap: 40px;
+  }
+  /* 单栏时方块上面就是蓝卡底部那排图标，少探出去一些，别挤着它们 */
+  .ft-lucky {
+    top: -20px;
+  }
+}
+@media (max-width: 560px) {
+  .ft {
+    padding-top: 40px;
+  }
+  .ft-right {
+    padding: 24px;
+  }
+  .ft-cols {
+    gap: 40px;
+  }
+  .ft-bottom {
+    /* 竖排时不能再留着换行：换行的竖排容器按内容定宽，输入行会把卡片撑破 */
+    flex-flow: column nowrap;
+    align-items: stretch;
+  }
+  .ft-notes {
+    flex-basis: auto;
+  }
+  .ft-lookup {
+    width: 100%;
+  }
+  .ft-lucky {
+    top: -28px;
+    right: 12px;
+  }
+  .ft-cube {
+    width: 72px;
+    height: 72px;
+    border-radius: 17px;
+  }
+  .ft-cube svg {
+    width: 32px;
+    height: 32px;
+  }
+}
+/* 再窄，手写的那句话会顶到第二列的标题，只留方块 */
+@media (max-width: 359px) {
+  .ft-lucky-text {
+    display: none;
+  }
+}
+/* 手指点的设备：输入框字号不到 16px，iOS 会在聚焦时把整页放大 */
+@media (pointer: coarse) {
+  .ft-lookup input {
+    font-size: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ft-glow::before,
+  .ft-glow::after {
+    animation: none;
+  }
+  .ft-flow {
+    display: none;
+  }
+  .ft-icon,
+  .ft-cube,
+  .ft-lookup button {
+    transition: none;
+  }
+}
