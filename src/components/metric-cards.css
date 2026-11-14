@@ -1,0 +1,507 @@
+/*
+  首页「为什么在这里买」的三张指标卡（类名都带 mc- 前缀：这个项目的构建配置下 CSS 模块不生效，样式表是全局的），照 docs/参考-Performance-三卡片设计稿.md：
+  卡片按 429×554 整体缩放，里面所有尺寸都用 --u（卡片宽 429px 时 1u = 1px），任何宽度下内部不重排，
+  变的只有一行摆几张。稿子里的视频不用，底色、图形都是这里的渐变和组件里的 SVG；
+  稿子的红、紫、橙换成天蓝色系里深、中、浅三种。
+*/
+
+.mc-dot-word {
+  display: inline-block;
+  width: auto;
+  height: 0.78em;
+  margin-inline: 0.12em;
+  color: var(--link);
+  overflow: visible;
+}
+
+.mc-line {
+  display: block;
+}
+
+/* ── 一行摆几张 ── */
+.mc-cards {
+  --gap: clamp(12px, 1.5vw, 23px);
+  --card-w: min(100cqw, 429px);
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
+  margin-top: 32px;
+}
+@media (min-width: 768px) {
+  /* 平板：两张一行，第三张居中 */
+  .mc-cards {
+    --card-w: min((100cqw - var(--gap)) / 2, 429px);
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    justify-content: center;
+  }
+  .mc-card:last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+@media (min-width: 1024px) {
+  .mc-cards {
+    --card-w: min((100cqw - 2 * var(--gap)) / 3, 429px);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+/* ── 卡片 ── */
+.mc-card {
+  /* 后代用 --u，不直接写 100cqw */
+  --u: calc(100cqw / 429);
+  --ink: #fff;
+  --d: 0.4s; /* 入场延迟：手机上三张一起出 */
+  container-type: inline-size;
+  position: relative;
+  isolation: isolate;
+  flex: 0 0 auto;
+  /* clip 不是 hidden：里面的图形比卡片高一截，hidden 的话拖选文字能把卡片内部滚歪 */
+  overflow: clip;
+  width: var(--card-w);
+  aspect-ratio: 429 / 554;
+  border: 1px solid rgb(255 255 255 / 0.36);
+  border-radius: calc(var(--card-w) * 17 / 429);
+  color: var(--ink);
+  box-shadow:
+    0 2px 4px rgb(8 47 73 / 0.3),
+    inset 0 1px 0 rgb(255 255 255 / 0.24);
+}
+@media (min-width: 768px) {
+  .mc-card {
+    --d: 0.46s;
+  }
+  .mc-card:nth-child(2) {
+    --d: 0.58s;
+  }
+  .mc-card:nth-child(3) {
+    --d: 0.7s;
+  }
+}
+
+/* 高光 */
+.mc-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    linear-gradient(102deg, rgb(255 255 255 / 0.1), transparent 28%, rgb(255 255 255 / 0.08) 62%, transparent 88%),
+    radial-gradient(ellipse 85% 34% at 54% 7%, rgb(255 255 255 / 0.24), transparent 72%);
+}
+
+/* 颗粒：组件里一张带噪点滤镜的 SVG */
+.mc-grain {
+  position: absolute;
+  inset: -8%;
+  z-index: 2;
+  width: 116%;
+  height: 116%;
+  opacity: 0.46;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.mc-title {
+  position: absolute;
+  z-index: 4;
+  top: 6.1%;
+  left: 5%;
+  width: 90%;
+  margin: 0;
+  font-size: calc(22.95 * var(--u));
+  font-weight: 600;
+  line-height: 1.48;
+  text-align: center;
+}
+
+.mc-metric {
+  position: absolute;
+  z-index: 5;
+  top: 47.7%;
+  left: 0;
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 0;
+}
+.mc-dots {
+  display: block;
+  width: auto;
+  height: calc(64 * var(--u));
+  overflow: visible;
+}
+.mc-unit {
+  margin-left: calc(8 * var(--u));
+  font-size: calc(30.6 * var(--u));
+  line-height: 1;
+  /* 中文字的墨迹底边比行框高一点，不用再往下挪，正好和点阵的底对齐 */
+}
+
+.mc-caption {
+  position: absolute;
+  z-index: 5;
+  top: 65.1%;
+  left: 10%;
+  width: 80%;
+  margin: 0;
+  font-size: calc(19.95 * var(--u));
+  line-height: 1.45;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* 白色药丸：只有第一张卡有，跳到货架 */
+.mc-more {
+  position: absolute;
+  z-index: 6;
+  top: 83.75%;
+  left: 50%;
+  display: grid;
+  width: calc(120 * var(--u));
+  height: calc(45 * var(--u));
+  place-items: center;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.97);
+  color: #082f49;
+  /* 卡片缩小时字跟着缩，但这是能点的按钮，不能小于 12px */
+  font-size: max(12px, calc(15 * var(--u)));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    0 1px 3px rgb(8 47 73 / 0.12);
+  transform: translateX(-50%);
+  transition:
+    transform 0.4s var(--ease-soft),
+    box-shadow 0.4s var(--ease-soft);
+}
+@media (hover: hover) {
+  .mc-more:hover {
+    transform: translateX(-50%) translateY(calc(-2 * var(--u)));
+    box-shadow: 0 8px 20px rgb(8 47 73 / 0.22);
+  }
+}
+.mc-more:focus-visible {
+  outline: 3px solid rgb(255 255 255 / 0.78);
+  outline-offset: 3px;
+}
+
+/* ── 第一张：深。「3 步」，一段带刻度的弧，弧上三个点 ── */
+.mc-deep {
+  background:
+    radial-gradient(ellipse 68% 45% at -4% -3%, rgb(125 211 252 / 0.42) 0%, rgb(125 211 252 / 0.2) 46%, transparent 77%),
+    radial-gradient(ellipse 70% 45% at 104% -4%, rgb(186 230 253 / 0.4) 0%, rgb(125 211 252 / 0.2) 48%, transparent 78%),
+    radial-gradient(ellipse 93% 47% at 106% 58%, rgb(56 189 248 / 0.34) 0%, rgb(56 189 248 / 0.16) 48%, transparent 76%),
+    radial-gradient(ellipse 74% 40% at -8% 73%, rgb(56 189 248 / 0.3) 0%, rgb(14 165 233 / 0.14) 48%, transparent 77%),
+    radial-gradient(ellipse 64% 49% at -8% 106%, rgb(125 211 252 / 0.3) 0%, transparent 78%),
+    radial-gradient(ellipse 64% 49% at 108% 106%, rgb(125 211 252 / 0.26) 0%, transparent 78%),
+    radial-gradient(ellipse 54% 30% at 50% 17%, rgb(8 47 73 / 0.3) 0%, transparent 78%),
+    linear-gradient(180deg, transparent 58%, rgb(8 47 73 / 0.38) 100%),
+    linear-gradient(180deg, #0284c7 0%, #0369a1 38%, #0369a1 100%);
+  /* 写完 background 再声明一次：玻璃描边底下才不会露出一条深色细线 */
+  background-origin: border-box;
+  text-shadow: 0 1px 1px rgb(8 47 73 / 0.2);
+}
+.mc-deep::before {
+  background:
+    linear-gradient(103deg, rgb(255 255 255 / 0.08), transparent 31%, rgb(255 255 255 / 0.055) 63%, transparent 88%),
+    radial-gradient(ellipse 92% 19% at 51% 0%, rgb(255 255 255 / 0.08), transparent 78%);
+}
+.mc-deep .mc-grain {
+  opacity: 0.54;
+}
+.mc-gauge {
+  position: absolute;
+  z-index: 2;
+  top: 27.63%;
+  left: 10.5%;
+  width: 79%;
+  height: 59%;
+  overflow: visible;
+}
+
+/* ── 第二张：中。「0 次注册」，一面瓷砖墙，中间那块是玻璃 ── */
+.mc-mid {
+  --ink: #082f49;
+  background:
+    radial-gradient(ellipse 118% 66% at 48% -8%, rgb(255 255 255 / 0.3), transparent 74%),
+    radial-gradient(ellipse 43% 42% at -5% 30%, rgb(240 249 255 / 0.5), transparent 78%),
+    radial-gradient(ellipse 43% 42% at 105% 30%, rgb(186 230 253 / 0.5), transparent 78%),
+    radial-gradient(ellipse 70% 48% at 70% 110%, rgb(125 211 252 / 0.5), transparent 77%),
+    radial-gradient(ellipse 45% 26% at 47% 78%, rgb(186 230 253 / 0.4), transparent 73%),
+    linear-gradient(180deg, transparent 66%, rgb(2 132 199 / 0.3) 100%),
+    linear-gradient(164deg, #bae6fd 0%, #7dd3fc 29%, #38bdf8 64%, #0ea5e9 100%);
+  background-origin: border-box;
+}
+.mc-mid .mc-grain {
+  opacity: 0.6;
+}
+.mc-wall {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 54%, rgb(0 0 0 / 0.72) 58%, rgb(0 0 0 / 0.18) 62%, transparent 65%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 54%, rgb(0 0 0 / 0.72) 58%, rgb(0 0 0 / 0.18) 62%, transparent 65%);
+}
+.mc-window {
+  position: absolute;
+  z-index: 3;
+  top: 32.4%;
+  left: 20.4%;
+  width: 59%;
+  height: 30.1%;
+  overflow: hidden;
+  border-radius: calc(10 * var(--u));
+  background:
+    linear-gradient(0deg, rgb(255 255 255 / 0.3) 0%, rgb(255 255 255 / 0.15) 45%, rgb(255 255 255 / 0) 80%),
+    radial-gradient(ellipse 118% 70% at 60% 8%, rgb(255 255 255 / 0.34), transparent 74%),
+    linear-gradient(105deg, rgb(240 249 255 / 0.72) 0%, rgb(186 230 253 / 0.62) 51%, rgb(125 211 252 / 0.72) 100%);
+  box-shadow:
+    0 calc(13 * var(--u)) calc(25 * var(--u)) rgb(3 105 161 / 0.31),
+    inset 0 1px 0 rgb(255 255 255 / 0.4);
+  -webkit-backdrop-filter: blur(calc(9 * var(--u))) saturate(1.08);
+  backdrop-filter: blur(calc(9 * var(--u))) saturate(1.08);
+}
+.mc-window-lines {
+  position: absolute;
+  top: 9%;
+  left: 6.7%;
+  width: 87%;
+}
+.mc-window-lines span {
+  display: block;
+  height: calc(6 * var(--u));
+  border-radius: calc(2.5 * var(--u));
+  background: rgb(255 255 255 / 0.72);
+}
+.mc-window-lines span:nth-child(1) {
+  width: 29%;
+  margin-bottom: calc(3 * var(--u));
+}
+.mc-window-lines span:nth-child(2) {
+  height: calc(22 * var(--u));
+  border-radius: calc(6 * var(--u));
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.8), rgb(186 230 253 / 0.75) 42%, rgb(56 189 248 / 0.7));
+}
+.mc-window-lines span:nth-child(3) {
+  width: 86%;
+  margin-top: calc(3 * var(--u));
+  opacity: 0.64;
+}
+
+/* ── 第三张：浅。「24 小时」，几条一直通着的线路 ── */
+.mc-light {
+  --ink: #082f49;
+  background:
+    radial-gradient(ellipse 54% 14% at 56% 0%, rgb(255 255 255 / 0.6), transparent 76%),
+    radial-gradient(ellipse 38% 24% at 102% 8%, rgb(255 255 255 / 0.5), transparent 75%),
+    radial-gradient(ellipse 28% 24% at -5% 66%, rgb(255 255 255 / 0.45), transparent 74%),
+    radial-gradient(ellipse 46% 30% at 104% 32%, rgb(56 189 248 / 0.3), transparent 74%),
+    radial-gradient(ellipse 80% 36% at 62% 57%, rgb(125 211 252 / 0.5), transparent 72%),
+    radial-gradient(ellipse 58% 30% at 6% 103%, rgb(14 165 233 / 0.34), transparent 76%),
+    radial-gradient(ellipse 60% 32% at 97% 101%, rgb(14 165 233 / 0.38), transparent 76%),
+    linear-gradient(177deg, #f0f9ff 0%, #bae6fd 55%, #7dd3fc 100%);
+  background-origin: border-box;
+}
+.mc-light::before {
+  background:
+    linear-gradient(102deg, rgb(255 255 255 / 0.07), transparent 30%, rgb(255 255 255 / 0.05) 62%, transparent 88%),
+    radial-gradient(ellipse 84% 26% at 54% 4%, rgb(255 255 255 / 0.11), transparent 74%);
+}
+.mc-light .mc-grain {
+  opacity: 0.58;
+}
+.mc-map {
+  position: absolute;
+  z-index: 2;
+  top: 21.7%;
+  left: 0;
+  width: 100%;
+  height: 43%;
+  opacity: 0.78;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 50%, rgb(0 0 0 / 0.46) 67%, rgb(0 0 0 / 0.15) 83%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 50%, rgb(0 0 0 / 0.46) 67%, rgb(0 0 0 / 0.15) 83%, transparent 96%);
+}
+
+/*
+  ── 入场动画 ──
+  稿子是打开页面就播；这一节在首页下半段，改成滚到这里才播，只播一次。
+  组件给 .mc-root 挂 data-anim：armed 时动画停在第一帧（内容先藏着），play 时放开，播完摘掉。
+  没有脚本、打印、或者系统设了「减少动态效果」时不挂这个属性，内容直接就在。
+*/
+@media screen and (prefers-reduced-motion: no-preference) {
+  .mc-root[data-anim] :is(.mc-line, .mc-intro, .mc-card, .mc-title, .mc-gauge, .mc-window, .mc-map, .mc-metric, .mc-caption, .mc-more) {
+    will-change: opacity, translate, scale, clip-path, filter;
+  }
+  .mc-root[data-anim] .mc-line {
+    animation: mc-headline-reveal 0.84s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  }
+  .mc-root[data-anim] .mc-line + .mc-line {
+    animation-delay: 0.17s;
+  }
+  .mc-root[data-anim] .mc-intro {
+    animation: mc-support-reveal 0.72s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+  }
+  .mc-root[data-anim] .mc-card {
+    animation: mc-card-establish 0.76s cubic-bezier(0.16, 1, 0.3, 1) var(--d) both;
+  }
+  .mc-root[data-anim] .mc-title {
+    animation: mc-card-title-reveal 0.62s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--d) + 0.14s) both;
+  }
+  .mc-root[data-anim] .mc-gauge {
+    animation: mc-gauge-resolve 0.82s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.3s) both;
+  }
+  .mc-root[data-anim] .mc-window {
+    animation: mc-panel-resolve 0.82s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.3s) both;
+  }
+  .mc-root[data-anim] .mc-map {
+    animation: mc-network-resolve 0.82s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.3s) both;
+  }
+  .mc-root[data-anim] .mc-metric {
+    animation: mc-metric-resolve 0.66s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.48s) both;
+  }
+  .mc-root[data-anim] .mc-caption {
+    animation: mc-caption-reveal 0.54s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--d) + 0.64s) both;
+  }
+  .mc-root[data-anim] .mc-more {
+    animation: mc-control-settle 0.52s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d) + 0.8s) both;
+  }
+  /* 写在各条 animation 后面：简写会把播放状态重置成 running */
+  .mc-root[data-anim="armed"] :is(.mc-line, .mc-intro, .mc-card, .mc-title, .mc-gauge, .mc-window, .mc-map, .mc-metric, .mc-caption, .mc-more) {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes mc-headline-reveal {
+  from {
+    opacity: 0;
+    translate: 0 0.52em;
+    clip-path: inset(0 0 56% 0);
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    clip-path: inset(-8% -2% -8% -2%);
+  }
+}
+@keyframes mc-support-reveal {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+  }
+}
+@keyframes mc-card-establish {
+  from {
+    opacity: 0.52;
+    translate: 0 10px;
+    scale: 0.985;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    scale: none;
+  }
+}
+@keyframes mc-card-title-reveal {
+  from {
+    opacity: 0;
+    translate: 0 calc(8 * var(--u));
+    clip-path: inset(0 0 48% 0);
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    clip-path: inset(-8% -2% -8% -2%);
+  }
+}
+@keyframes mc-gauge-resolve {
+  from {
+    opacity: 0;
+    translate: 0 calc(9 * var(--u));
+    scale: 0.972;
+    clip-path: inset(0 7% 18% 7%);
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    scale: none;
+    clip-path: inset(-3%);
+  }
+}
+@keyframes mc-panel-resolve {
+  from {
+    opacity: 0;
+    translate: 0 calc(10 * var(--u));
+    scale: 0.972;
+    clip-path: inset(8% 4% 8% 4%);
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    scale: none;
+    clip-path: inset(-3%);
+  }
+}
+@keyframes mc-network-resolve {
+  from {
+    opacity: 0;
+    translate: 0 calc(6 * var(--u));
+    clip-path: inset(45% 0 45% 0);
+  }
+  to {
+    opacity: 0.78;
+    translate: none;
+    clip-path: inset(0);
+  }
+}
+@keyframes mc-metric-resolve {
+  from {
+    opacity: 0;
+    translate: 0 calc(7 * var(--u));
+    scale: 0.985;
+    filter: blur(2.5px);
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    scale: none;
+    filter: none;
+  }
+}
+/* 说明文字平时是 0.9 的不透明度，所以不和 mc-support-reveal 共用 */
+@keyframes mc-caption-reveal {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 0.9;
+    translate: none;
+  }
+}
+@keyframes mc-control-settle {
+  from {
+    opacity: 0;
+    translate: 0 calc(6 * var(--u));
+    scale: 0.975;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+    scale: none;
+  }
+}
